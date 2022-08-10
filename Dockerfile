@@ -1,24 +1,21 @@
-FROM python:3.10.5-slim-buster as python-base
+FROM python:3.10.5-slim-buster 
 
- 
- ENV PYTHONFAULTHANDLER=1 \
-     PYTHONUNBUFFERED=1 \
-     PYTHONHASHSEED=random \
-     PIP_NO_CACHE_DIR=off \
-     PIP_DISABLE_PIP_VERSION_CHECK=on \
-     PIP_DEFAULT_TIMEOUT=100 \
-     POETRY_VERSION=1.0.0
- 
- # System deps:
- RUN pip install poetry
- 
- # Copy only requirements to cache them in docker layer
- WORKDIR /app
- COPY poetry.lock pyproject.toml /app/
- 
- # Project initialization:
- RUN poetry config virtualenvs.create false \
-   && poetry install $(test "$YOUR_ENV" == production && echo "--no-dev") --no-interaction --no-ansi
- 
- # Creating folders, and files for a project:
- COPY ./src /app
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# ホストからコピー
+COPY pyproject.toml .
+
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y curl git build-essential
+
+RUN pip install poetry
+
+RUN poetry config virtualenvs.create false \
+    # ふつうにvenvにインストールする
+    && poetry install
+    # && rm pyproject.toml
+COPY ./src ./src
+
+CMD ["uvicorn", "src.server:app", "--host", "0.0.0.0", "--port", "8000" ]
