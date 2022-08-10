@@ -2,4 +2,4 @@ build:
   docker:
     web: Dockerfile
 run:
-  web: poetry run uvicorn src.server:app --host 0.0.0.0
+  web: uvicorn src.server:app --host 0.0.0.0
