@@ -6,7 +6,7 @@ authors = ["Comamoca <comamoca.dev@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "3.10.5"
 fastapi = "^0.79.0"
 Pillow = "^9.2.0"
 tweepy = "^4.10.0"
